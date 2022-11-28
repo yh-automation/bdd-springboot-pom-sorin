@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,8 @@ public class LandingPage extends AbstractPage {
   }
 
   public void toLogin() {
-    clickXpathJs("Log in to Demo");
+    clickBy(By.xpath("//a/span[contains(text(), 'Access the SuiteCRM 8 Demo')]"));
+//    clickXpathJs("Access the SuiteCRM 8 Demo");
   }
 
   public String getTitle() {

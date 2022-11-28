@@ -21,16 +21,17 @@ public abstract class AbstractPage {
   }
 
   protected void acceptAlert() {
+    By by = By.xpath("//button[contains(@class, 'modal-button') and normalize-space(.)='Proceed']");
     (new FluentWait<>(DriverFactory.getInstance().getDriver())).withTimeout(10, TimeUnit.SECONDS)
         .pollingEvery(10, TimeUnit.MILLISECONDS).ignoring(NoSuchElementException.class)
-        .until(ExpectedConditions.alertIsPresent());
-    DriverFactory.getInstance().getDriver().switchTo().alert().accept();
+        .until(ExpectedConditions.elementToBeClickable(by));
+    DriverFactory.getInstance().getDriver().findElement(by).click();
   }
 
   protected boolean isThere(final String name) {
     final List<WebElement> listTitles = DriverFactory.getInstance().getDriver()
-        .findElements(By.xpath("//h2[contains(text(), ' " + name + " ')]"));
-    return listTitles.size() == 1;
+        .findElements(By.xpath("//div[contains(@class, 'record-view-name') and normalize-space(.)='" + name + "']"));
+  return listTitles.size() == 1;
   }
 
   protected void editText(final String id, final String value) {
@@ -41,10 +42,25 @@ public abstract class AbstractPage {
     element.sendKeys(value);
   }
 
+  protected void editText(final By by, final String value) {
+    final WebElement element = (new FluentWait<>(DriverFactory.getInstance().getDriver()))
+            .withTimeout(10, TimeUnit.SECONDS).pollingEvery(10, TimeUnit.MILLISECONDS)
+            .ignoring(NoSuchElementException.class)
+            .until(ExpectedConditions.visibilityOfElementLocated(by));
+    element.sendKeys(value);
+  }
+
   protected void clickId(final String id) {
     final WebElement button = DriverFactory.getInstance().getDriver().findElement(By.id(id));
     final JavascriptExecutor executor = (JavascriptExecutor) DriverFactory.getInstance()
         .getDriver();
+    executor.executeScript("arguments[0].click();", button);
+  }
+
+  protected void clickBy(final By by) {
+    final WebElement button = DriverFactory.getInstance().getDriver().findElement(by);
+    final JavascriptExecutor executor = (JavascriptExecutor) DriverFactory.getInstance()
+            .getDriver();
     executor.executeScript("arguments[0].click();", button);
   }
 

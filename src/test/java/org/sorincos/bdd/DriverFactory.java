@@ -2,8 +2,12 @@ package org.sorincos.bdd;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class DriverFactory {
+
+  boolean headless = System.getProperty("Headless", "true").equals("true");
 
   private DriverFactory() {
     // Do-nothing..Do not allow to initialize this class from outside
@@ -19,7 +23,18 @@ public class DriverFactory {
   ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>() {
     @Override
     protected WebDriver initialValue() {
-      return new FirefoxDriver(); // or other browser drivers
+      DesiredCapabilities capabilities = null;
+      capabilities = DesiredCapabilities.firefox();
+      capabilities.setJavascriptEnabled(true);
+      capabilities.setCapability("takesScreenshot", true);
+
+      FirefoxOptions options = new FirefoxOptions();
+      if (headless) {
+        options.addArguments("-headless", "-safe-mode");
+      }
+      capabilities.setCapability(FirefoxOptions.FIREFOX_OPTIONS, options);
+      final FirefoxDriver firefox = new FirefoxDriver();
+      return firefox;
     }
   };
 
